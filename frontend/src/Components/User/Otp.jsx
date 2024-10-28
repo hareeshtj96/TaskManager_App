@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 import { verifyOtp } from "../../Redux/Slice/UserSlice";
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const OtpPage = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     
     // Validation for OTP
     const validation = Yup.object().shape({
@@ -36,6 +38,9 @@ const OtpPage = () => {
                             dispatch(verifyOtp(otpData))
                                 .then(() => {
                                     toast.success("OTP verified, User created successfully")
+                                    setTimeout(() => {
+                                        navigate("/login")
+                                    }, 1000);
                                 })
                                 .catch(() => {
                                     toast.error("OTP verification failed")

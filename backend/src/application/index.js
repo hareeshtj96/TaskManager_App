@@ -1,6 +1,8 @@
-import { signupUseCase, verifyOtpUseCase } from './useCases';
+import { signupUseCase, verifyOtpUseCase, loginUseCase, addTaskUseCase } from './useCases';
 
 export {
     signupUseCase,
-    verifyOtpUseCase
+    verifyOtpUseCase,
+    loginUseCase,
+    addTaskUseCase,
 }
