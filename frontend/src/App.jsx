@@ -1,14 +1,16 @@
-import { useState } from 'react'
-import viteLogo from '/vite.svg'
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import UserRoutes from './Routes/UserRoutes/UserRoutes'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      
-    </>
+    <Router>
+      <Routes>
+        <Route path='/*' element={ <UserRoutes /> } />
+      </Routes>
+
+    </Router>
   )
 }
 
