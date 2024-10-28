@@ -3,7 +3,9 @@ import axios from 'axios';
 import {
     SIGNUPUSER,
     VERIFYOTP,
-} from '../../Services/userApi';
+    LOGINUSER,
+    ADDTASK
+} from '../../Services/userApi.js'
 
 
 // Async thunk for user signup
@@ -46,11 +48,41 @@ export const verifyOtp = createAsyncThunk("user/otpUser", async (otpData, thunkA
     }
 });
 
+
+export const loginUser = createAsyncThunk('user/loginUser', async (userData, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(LOGINUSER, userData);
+        console.log("response from login slice", response);
+
+
+        const { token } = response.data
+
+        localStorage.setItem('token', token);
+
+        return response.data.data;
+    } catch (error) {
+        return rejectWithValue(error.response.data.message || 'Login failed');
+    }
+});
+
+export const addTask = createAsyncThunk("user/addTasks", async ({ title, description, email }, thunkAPI) => {
+    try {
+        const response = await axios.post(ADDTASK, { title, description, email });
+        console.log("response from add task slice:", response.data.data);
+        return response.data.data;
+
+    } catch (error) {
+        const message = error.response?.data?.message || "An error occured while adding task"
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // Initial state
 const initialState = {
     user: null,
     loading: false,
-    error: null
+    error: null,
+    tasks: [],
 }
 
 
@@ -60,9 +92,13 @@ const userSlice = createSlice({
     reducers: {
 
         logout: (state) => {
-            localStorage.removeItem('sigupToken');
+            localStorage.removeItem('token');
             state.user = null;
-            state.error = null
+            state.error = null;
+            state.tasks = [];
+        },
+        clearError: (state) => {
+            state.error = null;
         }
     },
     extraReducers: (builder) => {
@@ -80,10 +116,41 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            .addCase(loginUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+            })
+            .addCase(loginUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(addTask.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(addTask.fulfilled, (state, action) => {
+                state.loading = false;
+                if (!state.tasks) {
+                    state.tasks = [];
+                }
+
+                state.tasks = [...state.tasks, action.payload];
+                state.error = null;
+            })
+            .addCase(addTask.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
     }
 })
 
-export const { logout } = userSlice.actions;
+
+
+export const { logout, clearError } = userSlice.actions;
 
 // Export reducer
 export default userSlice.reducer;
