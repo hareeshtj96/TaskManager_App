@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:9000'
+const BASE_URL = 'http://localhost:5000'
 
 export const SIGNUPUSER = `${BASE_URL}/signup`;
 export const VERIFYOTP = `${BASE_URL}/verify_otp`;
