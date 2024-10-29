@@ -7,14 +7,8 @@ export default (dependencies) => {
         try {
             // Decode the token 
             const tokenData = jwt.verify(token, process.env.JWT_SECRET);
-            console.log("token decoded:", tokenData);
-            console.log("User-provided OTP:", otp);
-
 
             const { email, otp: tokenOtp, firstName, lastName, password } = tokenData;
-            console.log("email extracted:", email);
-            console.log("otp extracted:", tokenOtp);
-
 
             // Compare the provided OTP with the OTP extracted from the token
             if (String(tokenOtp) !== String(otp)) {

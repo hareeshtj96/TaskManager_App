@@ -17,15 +17,11 @@ export default (dependencies) => {
 
             // Generate OTP and Token
             const otp = generateOtp();
-            console.log("otp sent:", otp);
 
             const token = generateToken({ email, otp, firstName, lastName, password });
-            console.log("token generated:", token);
 
             // Send OTP via email
             const emailResponse = await sentOtpEmail(email, otp);
-            console.log(" emailResponse:", emailResponse);
-
 
             if (emailResponse.status) {
                 if (emailResponse.status) {

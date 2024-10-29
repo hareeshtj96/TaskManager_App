@@ -4,13 +4,8 @@ import { databaseSchema } from "../database/index.js";
 export default {
 
     getUserByEmail: async (email) => {
-        console.log("data in repo:", email);
         try {
-
-            console.log("email inside function:", email)
-
             const user = await databaseSchema.User.findOne({ email });
-            console.log("user in repo:", user)
 
             if (user) {
                 return { status: true, data: user }
@@ -23,14 +18,8 @@ export default {
     },
 
     checkUserExists: async (email) => {
-        console.log("data in repo:", email);
         try {
-
-            console.log("email inside function:", email)
-
             const user = await databaseSchema.User.findOne({ email });
-            console.log("user in check user exists:", user);
-
 
             if (user) {
                 return { status: true, data: user }
@@ -60,8 +49,6 @@ export default {
 
             // save new user to database
             const savedUser = await newuser.save();
-            console.log(" user created successfully:", savedUser);
-
             return { status: true, data: savedUser }
         } catch (error) {
             console.error("Error creating user:", error);
@@ -72,7 +59,6 @@ export default {
     addTask: async ({ title, description, email }) => {
         try {
             const user = await databaseSchema.User.findOne({ email });
-            console.log("user is:", user);
 
             if (!user) {
                 return { status: false, message: "User not found" }
@@ -97,7 +83,6 @@ export default {
     fetchTask: async ({ email }) => {
         try {
             const user = await databaseSchema.User.findOne({ email });
-            console.log('user from repo fetch:', user);
 
             if (!user) {
                 return { status: false, message: "user not found" }
@@ -119,7 +104,6 @@ export default {
                 id, { status }, { new: true }
             );
 
-            console.log("updated task:", updatedTask);
 
             if (!updatedTask) {
                 return { status: false, message: "Task not found or update failed" }
@@ -129,6 +113,44 @@ export default {
         } catch (error) {
             console.error("Error updating task status:", error);
             return { status: false, message: "An error occured while updating task status" }
+        }
+    },
+
+    updateTask: async ({ id, title, description }) => {
+        try {
+            const updatedTask = await databaseSchema.Task.findByIdAndUpdate(
+                id,
+                { title, description },
+                { new: true }
+            )
+
+            if (!updatedTask) {
+                return { status: false, message: "Task not found or update failed" };
+            }
+
+            return { status: true, task: updatedTask };
+
+        } catch (error) {
+            console.error("Error updating task:", error);
+            return { status: false, message: "An error occurred while updating task" };
+        }
+    },
+
+    deleteTask: async ({ id }) => {
+        console.log(" id from repo:", id);
+
+        try {
+            const deletedTask = await databaseSchema.Task.findByIdAndDelete(id);
+
+            if (!deletedTask) {
+                return { status: false, message: "Task not found or delete failed" };
+            }
+
+            return { status: true, message: "Task deleted successfully", task: deletedTask };
+
+        } catch (error) {
+            console.error("Error deleting task:", error);
+            return { status: false, message: "An error occurred while deleting the task" };
         }
     }
 

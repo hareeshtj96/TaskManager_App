@@ -8,13 +8,15 @@ import {
   fetchTasks,
   clearTasks,
   updateTaskStatus,
+  updateTask,
+  deleteTask
 } from "../../Redux/Slice/UserSlice";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import TaskModal from "./TaskModal";
+
 
 // Task component that can be dragged
-const Task = ({ task, onDrop }) => {
+const Task = ({ task, onDrop, onEditClick, handleDeleteTask }) => {
   const [, dragRef] = useDrag({
     type: "TASK",
     item: { id: task._id, currentStatus: task.status },
@@ -30,13 +32,13 @@ const Task = ({ task, onDrop }) => {
 
       <div className="flex justify-end gap-2 mt-2">
         <button
-          onClick={() => onDelete(task._id)}
+          onClick={() => handleDeleteTask(task._id)}
           className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
         >
           Delete
         </button>
         <button
-          onClick={() => onEdit(task._id)}
+          onClick={() => onEditClick(task)}
           className="bg-blue-400 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
         >
           Edit
@@ -53,7 +55,7 @@ const Task = ({ task, onDrop }) => {
 };
 
 // ColumnCard component that can drop tasks
-const ColumnCard = ({ status, tasks, onDropTask }) => {
+const ColumnCard = ({ status, tasks, onDropTask, onEditClick, handleDeleteTask }) => {
   const [, dropRef] = useDrop({
     accept: "TASK",
     drop: (item) => onDropTask(item.id, status),
@@ -63,7 +65,7 @@ const ColumnCard = ({ status, tasks, onDropTask }) => {
     <div ref={dropRef} className="column-card-container p-4 bg-white shadow-md rounded-lg">
       <h2 className="bg-blue-500 text-white text-center p-3">{status}</h2>
       {tasks.map((task) => (
-        <Task key={task._id} task={task} />
+        <Task key={task._id} task={task} onEditClick={onEditClick} handleDeleteTask={handleDeleteTask} />
       ))}
     </div>
   );
@@ -73,7 +75,7 @@ const DashboardDnd = () => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentTaskId, setCurrentTaskId] = useState(null);
+  const [currentTask, setCurrentTask] = useState(null);
   const [newTask, setNewTask] = useState({ title: "", description: "" });
   const state = useSelector((state) => state.user);
   const tasks = state.tasks;
@@ -105,19 +107,36 @@ const DashboardDnd = () => {
     }
   };
 
-  const handleEditTask = async (task) => {
+  const handleDeleteTask = async (taskId) => {
     try {
-        await dispatch(updateTask({ id: currentTaskId, ...task})).unwrap();
+        console.log("Deleting task with id:", taskId);
+        await dispatch(deleteTask(taskId)).unwrap();
+        toast.success("Task deleted successfully!");
+      
+        dispatch(fetchTasks(email)).unwrap();
+    } catch (error) {
+        toast.error(error || "Failed to delete task")
+    }
+  }
+
+  const handleEditTask = async (e) => {
+    e.preventDefault()
+    try {
+        console.log("Updating task:", { id: currentTask, title: newTask.title, description: newTask.description });
+        await dispatch(updateTask({ id: currentTask, title: newTask.title, description: newTask.description })).unwrap();
         toast.success("Task updated successfully!");
         setIsEditModalOpen(false);
-        setCurrentTaskId(null);
+        setCurrentTask(null);
+        setNewTask({ title: '', description: ''});
+        dispatch(fetchTasks(email)).unwrap();
     } catch (error) {
         toast.error(error || "Failed to update task")
     }
   }
 
   const handleEditClick = (task) => {
-    setCurrentTaskId(task._id);
+    setCurrentTask(task._id);
+    setNewTask({ title: task.title, description: task.description})
     setIsEditModalOpen(true);
   }
 
@@ -178,6 +197,8 @@ const DashboardDnd = () => {
               status={status}
               tasks={columns[status]}
               onDropTask={handleDropTask}
+              onEditClick={handleEditClick}
+              handleDeleteTask={handleDeleteTask}
             />
           ))}
         </div>
@@ -236,6 +257,69 @@ const DashboardDnd = () => {
                     className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
                     Add Task
+                  </button>
+                </div>
+              </form>
+            </Dialog.Panel>
+          </div>
+        </Dialog> 
+        
+
+
+        <Dialog open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-30"
+            aria-hidden="true"
+          />
+          <div className="fixed inset-0 flex items-center justify-center">
+            <Dialog.Panel className="bg-white rounded shadow-lg p-6 w-full sm:max-w-md">
+              <Dialog.Title className="text-lg font-medium">
+                Edit Task
+              </Dialog.Title>
+              <form
+                onSubmit={handleEditTask}
+                className="flex flex-col gap-4 mt-4"
+              >
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="title" className="text-sm font-medium">
+                    Title
+                  </label>
+                  <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    value={newTask.title}
+                    onChange={handleInputChange}
+                    className="border border-gray-300 rounded px-3 py-2"
+                    required
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="description" className="text-sm font-medium">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={newTask.description}
+                    onChange={handleInputChange}
+                    className="border border-gray-300 rounded px-3 py-2 min-h-[100px]"
+                    required
+                  />
+                </div>
+                <div className="flex justify-end gap-3 mt-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Save Changes
                   </button>
                 </div>
               </form>

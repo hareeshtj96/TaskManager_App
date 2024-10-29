@@ -8,3 +8,5 @@ export const LOGINUSER = `${BASE_URL}/login`;
 export const ADDTASK = `${BASE_URL}/addTask`;
 export const FETCHTASK = `${BASE_URL}/fetchTasks`;
 export const DRAGTASK = `${BASE_URL}/dragTask`;
+export const UPDATETASK = `${BASE_URL}/update_task`;
+export const DELETETASK = `${BASE_URL}/delete_task`;

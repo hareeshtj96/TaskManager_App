@@ -6,13 +6,11 @@ export default (dependencies) => {
     const verifyOtpController = async (req, res) => {
         try {
             const { otp } = req.body;
-            console.log("otp in verify otp controller:", otp);
 
             const token = req.headers.authorization?.split(" ")[1];
 
             //  use case for OTP verification
             const response = await verifyOtpUseCase(dependencies).executeFunction({ otp, token });
-            console.log("Response from OTP verification use case:", response);
 
             if (response.status) {
                 return res.status(200).json(response);

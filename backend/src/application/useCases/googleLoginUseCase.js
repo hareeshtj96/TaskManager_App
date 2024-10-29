@@ -21,7 +21,6 @@ export default (dependencies) => {
                 return { status: true, token, message: "User already exists, logged in successfully" };
             }
 
-
             return { status: false, message: "You need to sign up first" };
 
         } catch (error) {

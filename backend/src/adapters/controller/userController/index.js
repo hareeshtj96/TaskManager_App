@@ -7,6 +7,8 @@ import fetchTaskController from "./fetchTaskController.js";
 import dragTaskController from "./dragTaskController.js";
 import googleSignupController from "./googleSignupController.js";
 import googleLoginController from "./googleLoginController.js";
+import updateTaskController from "./updateTaskController.js";
+import deleteTaskController from "./deleteTaskController.js";
 
 export default (dependencies) => {
     return {
@@ -18,5 +20,7 @@ export default (dependencies) => {
         dragTaskController: dragTaskController(dependencies),
         googleSignupController: googleSignupController(dependencies),
         googleLoginController: googleLoginController(dependencies),
+        updateTaskController: updateTaskController(dependencies),
+        deleteTaskController: deleteTaskController(dependencies),
     }
 }

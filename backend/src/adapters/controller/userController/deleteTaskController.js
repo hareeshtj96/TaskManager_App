@@ -1,15 +1,14 @@
 import dependencies from "../../../frameworks/config/dependencies.js";
 
 export default (dependencies) => {
-    const { dragTAskUseCase } = dependencies.useCase;
+    const { deleteTaskUseCase } = dependencies.useCase;
 
-    const dragTaskStatusController = async (req, res) => {
+    const deleteTaskStatusController = async (req, res) => {
         try {
             const { id } = req.params;
-            const { status } = req.body;
 
             // Call the use case to update the task status
-            const response = await dragTAskUseCase(dependencies).executeFunction({ id, status });
+            const response = await deleteTaskUseCase(dependencies).executeFunction({ id })
 
             if (response.status) {
                 return res.status(200).json(response);
@@ -18,10 +17,10 @@ export default (dependencies) => {
             }
 
         } catch (error) {
-            console.error("Error in update task status controller:", error);
+            console.error("Error in delete task  controller:", error);
             return res.status(500).json({ error: "Internal Server Error" });
         }
     };
 
-    return dragTaskStatusController;
+    return deleteTaskStatusController;
 };

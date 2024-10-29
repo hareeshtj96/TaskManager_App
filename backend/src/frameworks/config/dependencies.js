@@ -8,7 +8,9 @@ import {
     fetchTaskUseCase,
     dragTAskUseCase,
     googleRegisterUseCase,
-    googleLoginUseCase
+    googleLoginUseCase,
+    updateTaskUseCase,
+    deleteTaskUseCase
 } from "../../application/useCases/index.js"
 
 
@@ -22,6 +24,8 @@ const useCase = {
     dragTAskUseCase: dragTAskUseCase,
     googleRegisterUseCase: googleRegisterUseCase,
     googleLoginUseCase: googleLoginUseCase,
+    updateTaskUseCase: updateTaskUseCase,
+    deleteTaskUseCase: deleteTaskUseCase
 }
 
 const repository = {

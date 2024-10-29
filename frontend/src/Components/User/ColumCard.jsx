@@ -1,7 +1,7 @@
 import React from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
-const ColumnCard = ({ status, tasks, onDelete, onEdit, onViewDetails }) => {
+const ColumnCard = ({ status, tasks, handleDeleteTask, onEditClick, onViewDetails }) => {
     console.log("status..................:", status);
     
   return (
@@ -38,13 +38,13 @@ const ColumnCard = ({ status, tasks, onDelete, onEdit, onViewDetails }) => {
                       </div>
                       <div className="flex justify-end gap-2 mt-2">
                         <button
-                          onClick={() => onDelete(task._id)}
+                          onClick={() => handleDeleteTask(task._id)}
                           className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
                         >
                           Delete
                         </button>
                         <button
-                          onClick={() => onEdit(task._id)}
+                          onClick={() => onEditClick(task._id)}
                           className="bg-blue-400 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
                         >
                           Edit

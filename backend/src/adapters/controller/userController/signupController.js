@@ -8,7 +8,6 @@ export default (dependencies) => {
         try {
             const { firstName, lastName, email, password } = req.body;
             const response = await signupUseCase(dependencies).executeFunction({ firstName, lastName, email, password });
-            console.log("response from sign up controller:", response);
 
             if (response.status) {
                 return res.status(200).json(response)

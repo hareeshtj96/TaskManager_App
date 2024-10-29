@@ -1,4 +1,15 @@
-import { signupUseCase, verifyOtpUseCase, loginUseCase, addTaskUseCase, fetchTaskUseCase, dragTAskUseCase, googleRegisterUseCase, googleLoginUseCase } from './useCases';
+import {
+    signupUseCase,
+    verifyOtpUseCase,
+    loginUseCase,
+    addTaskUseCase,
+    fetchTaskUseCase,
+    dragTAskUseCase,
+    googleRegisterUseCase,
+    googleLoginUseCase,
+    updateTaskUseCase,
+    deleteTaskUseCase
+} from './useCases';
 
 export {
     signupUseCase,
@@ -8,5 +19,7 @@ export {
     fetchTaskUseCase,
     dragTAskUseCase,
     googleRegisterUseCase,
-    googleLoginUseCase
+    googleLoginUseCase,
+    updateTaskUseCase,
+    deleteTaskUseCase
 }

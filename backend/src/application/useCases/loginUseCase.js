@@ -14,9 +14,6 @@ export const loginUseCase = (dependencies) => {
                 return { status: false, message: 'User not found' };
             }
 
-            console.log("User from repo:", user);
-
-
             // Validate the password
             const isPasswordValid = await comparePassword(password, user.data.password);
             if (!isPasswordValid) {

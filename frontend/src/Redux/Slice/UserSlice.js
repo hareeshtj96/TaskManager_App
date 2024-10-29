@@ -8,7 +8,9 @@ import {
     FETCHTASK,
     DRAGTASK,
     GOOGLEREGISTER,
-    GOOGLELOGIN
+    GOOGLELOGIN,
+    UPDATETASK,
+    DELETETASK
 } from '../../Services/userApi.js'
 
 
@@ -16,7 +18,6 @@ import {
 export const signupUser = createAsyncThunk("user/signupUser", async (userData, thunkAPI) => {
     try {
         const response = await axios.post(SIGNUPUSER, userData);
-        console.log('response from signup slice:', response);
 
         localStorage.setItem('signupToken', response.data.token);
 
@@ -34,7 +35,6 @@ export const googleRegister = createAsyncThunk(
     async (googleUserData, thunkAPI) => {
         try {
             const response = await axios.post(GOOGLEREGISTER, googleUserData);
-            console.log('response from googleRegister slice:', response);
 
             const { token } = response.data;
 
@@ -47,7 +47,6 @@ export const googleRegister = createAsyncThunk(
             }).join(''));
 
             const decoded = JSON.parse(jsonPayload);
-            console.log("Decoded token:", decoded);
 
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(decoded));
@@ -68,7 +67,6 @@ export const googleLogin = createAsyncThunk(
     async (googleUserData, thunkAPI) => {
         try {
             const response = await axios.post(GOOGLELOGIN, googleUserData);
-            console.log('response from google Login slice:', response);
 
             const { token } = response.data;
 
@@ -81,7 +79,6 @@ export const googleLogin = createAsyncThunk(
             }).join(''));
 
             const decoded = JSON.parse(jsonPayload);
-            console.log("Decoded token:", decoded);
 
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(decoded));
@@ -106,7 +103,6 @@ export const verifyOtp = createAsyncThunk("user/otpUser", async (otpData, thunkA
             }
         }
         const response = await axios.post(VERIFYOTP, otpData, config);
-        console.log('Response from OTP verification slice:', response);
 
         if (response.data.status) {
             localStorage.removeItem('signupToken');
@@ -125,8 +121,6 @@ export const verifyOtp = createAsyncThunk("user/otpUser", async (otpData, thunkA
 export const loginUser = createAsyncThunk('user/loginUser', async (userData, { rejectWithValue }) => {
     try {
         const response = await axios.post(LOGINUSER, userData);
-        console.log("response from login slice", response);
-
 
         const { token } = response.data
 
@@ -141,7 +135,7 @@ export const loginUser = createAsyncThunk('user/loginUser', async (userData, { r
 export const addTask = createAsyncThunk("user/addTasks", async ({ title, description, email }, thunkAPI) => {
     try {
         const response = await axios.post(ADDTASK, { title, description, email });
-        console.log("response from add task slice:", response.data.data);
+
         return response.data.data;
 
     } catch (error) {
@@ -153,11 +147,10 @@ export const addTask = createAsyncThunk("user/addTasks", async ({ title, descrip
 export const fetchTasks = createAsyncThunk("user/fetchTasks", async (email, thunkAPI) => {
     try {
         const response = await axios.get(`${FETCHTASK}/${encodeURIComponent(email)}`);
-        console.log("response from fetch slice:", response.data.data);
+
         const tasks = response.data.data;
 
         const uniqueTasks = Array.from(new Map(tasks.map(task => [task._id, task])).values());
-        console.log("unique tasks:", uniqueTasks);
 
         return uniqueTasks
 
@@ -172,10 +165,41 @@ export const updateTaskStatus = createAsyncThunk(
     async ({ id, newStatus }, thunkAPI) => {
         try {
             const response = await axios.patch(`${DRAGTASK}/${id}/status`, { status: newStatus });
-            console.log("Response from updateTaskStatus slice:", response.data);
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || "An error occurred while updating task status";
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+
+export const deleteTask = createAsyncThunk(
+    'user/deleteTask',
+    async (id, thunkAPI) => {
+        try {
+            const response = await axios.delete(`${DELETETASK}/${id}`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || "An error occurred while deleting task status";
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+
+
+export const updateTask = createAsyncThunk(
+    'user/updateTask',
+    async ({ id, title, description }, thunkAPI) => {
+        try {
+            const response = await axios.patch(`${UPDATETASK}/${id}`, {
+                title,
+                description,
+            });
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || "An error occurred while updating task";
             return thunkAPI.rejectWithValue(message);
         }
     }

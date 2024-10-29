@@ -7,6 +7,8 @@ import fetchTaskController from "../../controller/userController/fetchTaskContro
 import dragTaskController from "../../controller/userController/dragTaskController.js";
 import googleSignupController from "../../controller/userController/googleSignupController.js";
 import googleLoginController from "../../controller/userController/googleLoginController.js";
+import updateTaskController from "../../controller/userController/updateTaskController.js";
+import deleteTaskController from "../../controller/userController/deleteTaskController.js";
 
 export default (dependencies) => {
     const router = express.Router();
@@ -19,6 +21,8 @@ export default (dependencies) => {
     router.patch('/dragTask/:id/status', dragTaskController(dependencies));
     router.post('/google_signup', googleSignupController(dependencies));
     router.post('/google_login', googleLoginController(dependencies));
+    router.patch('/update_task/:id', updateTaskController(dependencies));
+    router.delete('/delete_task/:id', deleteTaskController(dependencies));
 
     return router;
 };

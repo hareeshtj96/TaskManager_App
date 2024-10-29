@@ -7,8 +7,6 @@ export default (dependencies) => {
         try {
 
             const taskResponse = await userRepository.fetchTask({ email });
-            console.log("response from use case:", taskResponse);
-
 
             if (taskResponse.status) {
                 return { status: true, message: "Task fetched successfully", data: taskResponse.tasks };

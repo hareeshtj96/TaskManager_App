@@ -6,7 +6,6 @@ export default (dependencies) => {
     const executeFunction = async ({ id, status }) => {
         try {
             const updateResponse = await userRepository.updateTaskStatus({ id, status });
-            console.log("Response from update task status use case:", updateResponse);
 
             if (updateResponse.status) {
                 return { status: true, message: "Task status updated successfully", data: updateResponse.task };

@@ -6,11 +6,8 @@ export default (dependencies) => {
     const loginController = async (req, res) => {
         try {
             const { email, password } = req.body;
-            console.log("User data in login controller:", { email, password });
-
             // Use case for user login
             const response = await loginUseCase(dependencies).executeFunction({ email, password });
-            console.log("Response from login use case:", response);
 
             if (response.status) {
                 return res.status(200).json(response);

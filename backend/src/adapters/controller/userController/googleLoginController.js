@@ -4,14 +4,11 @@ export default (dependencies) => {
     const { googleLoginUseCase } = dependencies.useCase;
 
     const googleLoginController = async (req, res) => {
-        console.log("entered google controller:");
-
         try {
             const { name, email } = req.body;
 
             // Execute Google registration use case
             const response = await googleLoginUseCase(dependencies).executeFunction({ name, email });
-            console.log("response from google login controller:", response);
 
             // Respond based on success or failure
             if (response.status) {

@@ -6,10 +6,8 @@ export default (dependencies) => {
     const fetchTaskController = async (req, res) => {
         try {
             const { email } = req.params;
-            console.log("Task data in fetch task controller:", { email });
 
             const response = await fetchTaskUseCase(dependencies).executeFunction({ email });
-            console.log("Response from fetch task controller:", response);
 
             if (response.status) {
                 return res.status(201).json(response);
