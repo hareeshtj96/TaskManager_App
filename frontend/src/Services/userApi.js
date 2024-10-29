@@ -1,6 +1,8 @@
 const BASE_URL = 'http://localhost:5000'
 
 export const SIGNUPUSER = `${BASE_URL}/signup`;
+export const GOOGLEREGISTER = `${BASE_URL}/google_signup`;
+export const GOOGLELOGIN = `${BASE_URL}/google_login`;
 export const VERIFYOTP = `${BASE_URL}/verify_otp`;
 export const LOGINUSER = `${BASE_URL}/login`;
 export const ADDTASK = `${BASE_URL}/addTask`;

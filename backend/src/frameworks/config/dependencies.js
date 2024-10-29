@@ -6,7 +6,9 @@ import {
     loginUseCase,
     addTaskUseCase,
     fetchTaskUseCase,
-    dragTAskUseCase
+    dragTAskUseCase,
+    googleRegisterUseCase,
+    googleLoginUseCase
 } from "../../application/useCases/index.js"
 
 
@@ -17,7 +19,9 @@ const useCase = {
     loginUseCase: loginUseCase,
     addTaskUseCase: addTaskUseCase,
     fetchTaskUseCase: fetchTaskUseCase,
-    dragTAskUseCase: dragTAskUseCase
+    dragTAskUseCase: dragTAskUseCase,
+    googleRegisterUseCase: googleRegisterUseCase,
+    googleLoginUseCase: googleLoginUseCase,
 }
 
 const repository = {

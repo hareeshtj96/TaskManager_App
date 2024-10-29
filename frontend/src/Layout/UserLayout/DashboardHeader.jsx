@@ -14,13 +14,13 @@ const DashboardHeader = () => {
 
     return (
         <header className="bg-blue-500 p-4 flex justify-between items-center w-full">
-            <div className="flex items-center ml-32">
+            <div className="flex items-center ml-4 sm:ml-32">
                 <img src="/to-do-list.png" alt="To Do List Icon" className="h-8 w-8 mr-2" />
             </div>
-            <div className="space-x-4 flex items-center mr-40">
+            <div className="flex items-center mr-4 sm:mr-40">
                 <button 
                     onClick={handleLogout} 
-                    className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'>
+                    className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transiton duration-200'>
                     Logout
                 </button>
             </div>

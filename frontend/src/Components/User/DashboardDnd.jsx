@@ -21,7 +21,7 @@ const Task = ({ task, onDrop }) => {
   });
 
   return (
-    <div ref={dragRef} className="task-card p-2 mt-4 mb-2 border bg-blue-50">
+    <div ref={dragRef} className="task-card p-2 mt-4 mb-2 border bg-blue-50 rounded-lg">
       <h3 className="font-bold">{task.title}</h3>
       <p>Description {task.description}</p>
       <div className="text-gray-400 mt-4 text-xs font-medium">
@@ -60,7 +60,7 @@ const ColumnCard = ({ status, tasks, onDropTask }) => {
   });
 
   return (
-    <div ref={dropRef} className="column-card-container p-4 bg-white shadow-md">
+    <div ref={dropRef} className="column-card-container p-4 bg-white shadow-md rounded-lg">
       <h2 className="bg-blue-500 text-white text-center p-3">{status}</h2>
       {tasks.map((task) => (
         <Task key={task._id} task={task} />
@@ -154,24 +154,24 @@ const DashboardDnd = () => {
         </button>
 
         {/* Search and Sort Section */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center sm:flex-row items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <span className="text-gray-700">Search:</span>
             <input
               type="text"
               placeholder="Search..."
-              className="border border-gray-300 rounded px-3 py-1 w-72"
+              className="border border-gray-300 rounded px-3 py-1 w-full sm:w-72"
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2 sm:mt-0">
             <span className="text-gray-700">Sort By:</span>
-            <select className="border border-gray-300 rounded px-3 py-1 w-32">
+            <select className="border border-gray-300 rounded px-3 py-1 w-full sm:w-32">
               <option value="recent">Recent</option>
             </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Object.keys(columns).map((status) => (
             <ColumnCard
               key={status}

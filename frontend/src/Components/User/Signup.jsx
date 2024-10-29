@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 import { signupUser } from "../../Redux/Slice/UserSlice";
 import { ToastContainer, toast } from 'react-toastify'; 
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { googleRegister } from "../../Redux/Slice/UserSlice";
+import { auth } from "../../FirebaseConfig/FirebaseConfig.js";
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -12,6 +15,7 @@ const Signup = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { loading, error, user } = useSelector((state) => state.user);
+   
 
     const state = useSelector((state) => state)
     console.log("state:", state)
@@ -24,6 +28,32 @@ const Signup = () => {
         password: Yup.string().min(6, 'Password must be atleast 6 characteres').required('Password is required'),
         confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match').required('Confirm Password is required'),
     });
+
+
+    const handleGoogleSignIn = async () => {
+        const provider = new GoogleAuthProvider();
+       
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            //dispatch an action to save the user details in redux store
+            dispatch(googleRegister({
+                name: user.displayName,
+                email: user.email,
+            }))
+            .then(() => {
+                toast.success("Logged in Successfully")
+                setTimeout(() => {
+                    navigate("/dashboard");
+                }, 1000)
+               
+            });
+        } catch(error) {
+            console.error("Google Sign-In Error:", error);
+            toast.error("Sign up Failed")
+        }
+    }
 
     return(
         <div className="flex items-center justify-center flex-grow bg-white-100">
@@ -130,7 +160,7 @@ const Signup = () => {
                     </div>
 
                     <div className="mt-4 flex justify-center">
-                        <button className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">
+                        <button onClick={handleGoogleSignIn} className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">
                             Sign up with Google
                         </button>
                     </div>

@@ -15,7 +15,7 @@ const expressConfig = (app) => {
 
     app.use(
         cors({
-            origin: ["https://todotask-appv1.netlify.app"],
+            origin: ["http://localhost:5174"],
             methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
             credentials: true,
             allowedHeaders: ["Content-Type", "Authorization"],

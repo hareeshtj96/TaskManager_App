@@ -6,7 +6,9 @@ import {
     LOGINUSER,
     ADDTASK,
     FETCHTASK,
-    DRAGTASK
+    DRAGTASK,
+    GOOGLEREGISTER,
+    GOOGLELOGIN
 } from '../../Services/userApi.js'
 
 
@@ -26,6 +28,75 @@ export const signupUser = createAsyncThunk("user/signupUser", async (userData, t
 })
 
 
+// Async thunk for google register
+export const googleRegister = createAsyncThunk(
+    "user/googleRegister",
+    async (googleUserData, thunkAPI) => {
+        try {
+            const response = await axios.post(GOOGLEREGISTER, googleUserData);
+            console.log('response from googleRegister slice:', response);
+
+            const { token } = response.data;
+
+            const base64url = token.split('.')[1];
+
+            const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const decoded = JSON.parse(jsonPayload);
+            console.log("Decoded token:", decoded);
+
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(decoded));
+            return { token, user: decoded, response };
+
+        } catch (error) {
+            const message = error.response?.data?.message || "An error occurred during Google sign-up";
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+
+
+// Async thunk for google login
+export const googleLogin = createAsyncThunk(
+    "user/googleLogin",
+    async (googleUserData, thunkAPI) => {
+        try {
+            const response = await axios.post(GOOGLELOGIN, googleUserData);
+            console.log('response from google Login slice:', response);
+
+            const { token } = response.data;
+
+            const base64url = token.split('.')[1];
+
+            const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const decoded = JSON.parse(jsonPayload);
+            console.log("Decoded token:", decoded);
+
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(decoded));
+            return { token, user: decoded, response };
+
+        } catch (error) {
+            const message = error.response?.data?.message || "An error occurred during Google Login";
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+
+
+// Slice for verify otp
 export const verifyOtp = createAsyncThunk("user/otpUser", async (otpData, thunkAPI) => {
     try {
         const token = localStorage.getItem('signupToken');
@@ -151,6 +222,32 @@ const userSlice = createSlice({
             .addCase(signupUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            .addCase(googleRegister.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(googleRegister.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.token = action.payload.token;
+                state.user = action.payload.user;
+                state.otpVerified = false;
+            })
+            .addCase(googleRegister.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(googleLogin.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(googleLogin.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.token = action.payload.token;
+                state.user = action.payload.user;
+                state.otpVerified = false;
+            })
+            .addCase(googleLogin.rejected, (state) => {
+                state.status = 'failed';
             })
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;

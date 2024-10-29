@@ -4,6 +4,8 @@ import { loginUseCase } from "./loginUseCase.js";
 import addTaskUseCase from "./addTaskUseCase.js";
 import fetchTaskUseCase from "./fetchTaskUseCase.js";
 import dragTAskUseCase from "./dragTAskUseCase.js";
+import googleRegisterUseCase from "./googleRegisterUseCase.js";
+import googleLoginUseCase from "./googleLoginUseCase.js";
 
 export {
     signupUseCase,
@@ -11,5 +13,7 @@ export {
     loginUseCase,
     addTaskUseCase,
     fetchTaskUseCase,
-    dragTAskUseCase
+    dragTAskUseCase,
+    googleRegisterUseCase,
+    googleLoginUseCase,
 }
