@@ -11,6 +11,7 @@ import {
 } from "../../Redux/Slice/UserSlice";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import TaskModal from "./TaskModal";
 
 // Task component that can be dragged
 const Task = ({ task, onDrop }) => {
@@ -71,6 +72,8 @@ const ColumnCard = ({ status, tasks, onDropTask }) => {
 const DashboardDnd = () => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentTaskId, setCurrentTaskId] = useState(null);
   const [newTask, setNewTask] = useState({ title: "", description: "" });
   const state = useSelector((state) => state.user);
   const tasks = state.tasks;
@@ -101,6 +104,22 @@ const DashboardDnd = () => {
       toast.error(error || "Failed to add task.");
     }
   };
+
+  const handleEditTask = async (task) => {
+    try {
+        await dispatch(updateTask({ id: currentTaskId, ...task})).unwrap();
+        toast.success("Task updated successfully!");
+        setIsEditModalOpen(false);
+        setCurrentTaskId(null);
+    } catch (error) {
+        toast.error(error || "Failed to update task")
+    }
+  }
+
+  const handleEditClick = (task) => {
+    setCurrentTaskId(task._id);
+    setIsEditModalOpen(true);
+  }
 
   const handleDropTask = async (taskId, newStatus) => {
     const task = tasks.find((t) => t._id === taskId);
@@ -222,7 +241,9 @@ const DashboardDnd = () => {
               </form>
             </Dialog.Panel>
           </div>
-        </Dialog>
+        </Dialog> 
+
+       
 
         <ToastContainer />
       </div>
