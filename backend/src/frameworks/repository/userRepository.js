@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { databaseSchema } from "../database/index.js";
-import { addTask } from "../../../../frontend/src/Redux/Slice/UserSlice.js";
+import { addTask, updateTaskStatus } from "../../../../frontend/src/Redux/Slice/UserSlice.js";
 
 
 export default {
@@ -69,6 +69,44 @@ export default {
         } catch (error) {
             console.error("Error creating task:", error);
             return { status: false, message: "Internal Server Error" }
+        }
+    },
+
+    fetchTask: async ({ email }) => {
+        try {
+            const user = await databaseSchema.User.findOne({ email });
+            console.log('user from repo fetch:', user);
+
+            if (!user) {
+                return { status: false, message: "user not found" }
+            }
+
+            const tasks = await databaseSchema.Task.find({ user: user._id })
+
+            return { status: true, tasks: tasks }
+
+        } catch (error) {
+            console.error("Error fetching tasks:", error);
+            return { status: false, message: "An error occured while fetching tasks" }
+        }
+    },
+
+    updateTaskStatus: async ({ id, status }) => {
+        try {
+            const updatedTask = await databaseSchema.Task.findByIdAndUpdate(
+                id, { status }, { new: true }
+            );
+
+            console.log("updated task:", updatedTask);
+
+            if (!updatedTask) {
+                return { status: false, message: "Task not found or update failed" }
+            }
+
+            return { status: true, task: updatedTask }
+        } catch (error) {
+            console.error("Error updating task status:", error);
+            return { status: false, message: "An error occured while updating task status" }
         }
     }
 

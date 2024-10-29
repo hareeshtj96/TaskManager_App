@@ -4,7 +4,9 @@ import {
     SIGNUPUSER,
     VERIFYOTP,
     LOGINUSER,
-    ADDTASK
+    ADDTASK,
+    FETCHTASK,
+    DRAGTASK
 } from '../../Services/userApi.js'
 
 
@@ -77,6 +79,37 @@ export const addTask = createAsyncThunk("user/addTasks", async ({ title, descrip
     }
 })
 
+export const fetchTasks = createAsyncThunk("user/fetchTasks", async (email, thunkAPI) => {
+    try {
+        const response = await axios.get(`${FETCHTASK}/${encodeURIComponent(email)}`);
+        console.log("response from fetch slice:", response.data.data);
+        const tasks = response.data.data;
+
+        const uniqueTasks = Array.from(new Map(tasks.map(task => [task._id, task])).values());
+        console.log("unique tasks:", uniqueTasks);
+
+        return uniqueTasks
+
+    } catch (error) {
+        const message = error.response?.data?.message || "An error occured while fetching task"
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+export const updateTaskStatus = createAsyncThunk(
+    'user/updateTaskStatus',
+    async ({ id, newStatus }, thunkAPI) => {
+        try {
+            const response = await axios.patch(`${DRAGTASK}/${id}/status`, { status: newStatus });
+            console.log("Response from updateTaskStatus slice:", response.data);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || "An error occurred while updating task status";
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
 // Initial state
 const initialState = {
     user: null,
@@ -99,6 +132,9 @@ const userSlice = createSlice({
         },
         clearError: (state) => {
             state.error = null;
+        },
+        clearTasks: (state) => {
+            state.tasks = [];
         }
     },
     extraReducers: (builder) => {
@@ -132,25 +168,23 @@ const userSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(addTask.fulfilled, (state, action) => {
-                state.loading = false;
-                if (!state.tasks) {
-                    state.tasks = [];
-                }
-
-                state.tasks = [...state.tasks, action.payload];
-                state.error = null;
-            })
             .addCase(addTask.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
+            .addCase(fetchTasks.fulfilled, (state, action) => {
+                state.loading = false;
+                const uniqueTasks = Array.from(new Map(action.payload.map(task => [task._id, task])).values());
+                state.tasks = uniqueTasks;
+                state.loading = false;
+                state.error = null;
+            })
     }
 })
 
 
 
-export const { logout, clearError } = userSlice.actions;
+export const { logout, clearError, clearTasks } = userSlice.actions;
 
 // Export reducer
 export default userSlice.reducer;
