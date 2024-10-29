@@ -3,6 +3,8 @@ import signupController from "../../controller/userController/signupController.j
 import verifyOtpController from "../../controller/userController/verifyOtpController.js";
 import loginController from "../../controller/userController/loginController.js";
 import taskController from "../../controller/userController/taskController.js";
+import fetchTaskController from "../../controller/userController/fetchTaskController.js";
+import dragTaskController from "../../controller/userController/dragTaskController.js";
 
 export default (dependencies) => {
     const router = express.Router();
@@ -11,6 +13,8 @@ export default (dependencies) => {
     router.post('/verify_otp', verifyOtpController(dependencies));
     router.post('/login', loginController(dependencies));
     router.post('/addTask', taskController(dependencies));
+    router.get('/fetchTasks/:email', fetchTaskController(dependencies));
+    router.patch('/dragTask/:id/status', dragTaskController(dependencies))
 
     return router;
 };

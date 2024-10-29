@@ -14,6 +14,11 @@ const taskSchema = new Schema({
         ref: 'user',
         required: true
     },
+    status: {
+        type: String,
+        enum: ['TODO', 'IN_PROGRESS', 'DONE'],
+        default: 'TODO'
+    },
     createdAt: {
         type: Date,
         default: Date.now
