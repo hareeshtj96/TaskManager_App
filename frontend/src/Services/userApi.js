@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000'
+const BASE_URL = 'https://taskmanager-app-rew4.onrender.com'
 
 export const SIGNUPUSER = `${BASE_URL}/signup`;
 export const GOOGLEREGISTER = `${BASE_URL}/google_signup`;
